@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express'); 
 const app = express();
 const mysql = require('mysql');
@@ -11,17 +13,16 @@ app.use(express.static(__dirname + '/public'));
 
 //Create database connection
 const db = mysql.createConnection({
-	host: 'localhost',
-	user: 'root',
-	password: '$BK2mXz3',
-	database: 'todos'
+	host: process.env.DATABASE_HOST,
+	user: process.env.DATABASE_USER,
+	password: process.env.DATABASE_PASSWORD,
+	database: process.env.DATABASE_NAME
 })
 
 db.connect((err) => {
 	if (err) {
-		response.status(500).send('Error in database operation');
 		console.log(err);
-		return;
+		process.exit(1);
 	}
 	console.log('Database connected!');
 });
@@ -39,7 +40,7 @@ app.post('/add-todo', (req, res) => {
 	db.query(`INSERT INTO todo_list(id, name, completed)
 		VALUES('${req.body.id}', '${req.body.text}', '${req.body.checked}')`, (err, result) => {
 			if (err) {
-				res.status(500).send('Todo item not added successfully');
+				res.status(500).send('Failed to add todo item');
       	console.log(err);
       	return;
 			}
@@ -52,7 +53,7 @@ app.post('/add-todo', (req, res) => {
 app.post('/mark-checked', (req, res) => {
 	db.query(`UPDATE todo_list SET completed = '${req.body.checked}' WHERE id = ${req.body.id}`, (err, result) => {
 			if (err) {
-				res.status(500).send('Todo item not checked successfully');
+				res.status(500).send('Failed to update todo item');
       	console.log(err);
       	return;
 			}
@@ -65,7 +66,7 @@ app.post('/mark-checked', (req, res) => {
 app.post('/delete-todo', (req, res) => {
 	db.query(`DELETE FROM todo_list WHERE id = ${req.body.id}`, (err, result) => {
 		if (err) {
-      res.status(500).send('Todo item not deleted successfully');
+      res.status(500).send('Failed to delete todo item');
       console.log(err);
       return;
     }
@@ -74,6 +75,6 @@ app.post('/delete-todo', (req, res) => {
 })
 
 
-const server = app.listen(7000, () => {
+const server = app.listen(process.env.PORT, () => {
 	console.log(`Express running → PORT ${server.address().port}`);
 })

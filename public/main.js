@@ -1,5 +1,3 @@
-// import { Draggable } from '@shopify/draggable';
-
 let todoItems = [];
 const container = document.querySelector('.container');
 
@@ -59,14 +57,18 @@ function addTodo(text) {
       'Content-type': 'application/json; charset=UTF-8'
     }
   })
-  .then(response => response.text())
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(response.text());
+    }
+    return response.text()
+  })
   .then(text => {
     todoItems.push(todo);
     renderTodo(todo);
-    console.log(text);
   })
   .catch(err => {
-    console.log(err);
+    alert(err);
   }) 
 }
 
@@ -87,14 +89,19 @@ function toggleDone(key) {
       'Content-type': 'application/json; charset=UTF-8'
     }
   })
-  .then(response => response.text())
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(response.text());
+    }
+    return response.text();
+  })
   .then(text => {
     todoItems.push(todo);
     renderTodo(todo);
     console.log(text);
   })
   .catch(err => {
-    console.log(err);
+    alert(err);
   }) 
 }
 
@@ -107,7 +114,6 @@ function deleteTodo(key) {
     ...todoItems[index]
   };
   todoItems = todoItems.filter(item => item.id !== Number(key));
-  renderTodo(todo);
 
   //Fetch request for deletion of todo item from database
   fetch('http://localhost:7000/delete-todo', {
@@ -117,9 +123,17 @@ function deleteTodo(key) {
       'Content-type': 'application/json; charset=UTF-8'
     }
   })
-  .then(response => response.text())
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(response.text());
+    }
+    return response.text();
+  })
   .then(text => {
-    console.log(text);
+    renderTodo(todo);
+  })
+  .catch(err => {
+    alert(err);
   })
 }
 
