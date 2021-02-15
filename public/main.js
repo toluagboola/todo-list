@@ -4,7 +4,7 @@ const container = document.querySelector('.container');
 
 // Render todos on the screen
 function renderTodo(todo) {
-  // Store todos in local storage
+  // Persist application state to local storage
   localStorage.setItem('todoItems', JSON.stringify(todoItems));
 
   const list = document.querySelector('.js-todo-list');
@@ -12,10 +12,13 @@ function renderTodo(todo) {
   
   if (todo.deleted) {
     item.remove();
+    // Clear whitespace from list container when `todoItems` is empty
     if (todoItems.length === 0) list.innerHTML = '';
     return
   }
 
+  // Use the ternary operator to check if `todo.checked` is true
+  // if so, assign 'done' to `isChecked`. Otherwise, assign an empty string
   const isChecked = todo.checked ? 'done': '';
   const node = document.createElement("li");
   node.setAttribute('class', `todo-item droppable ${isChecked}`);
@@ -30,9 +33,11 @@ function renderTodo(todo) {
     </button>
   `;
 
+  // If item already exists in the DOM, replace it
   if (item) {
     list.replaceChild(node, item);
   } else {
+    // else, append it to the end of the list
     list.append(node);
   }
 
@@ -75,6 +80,7 @@ function addTodo(text) {
 
 // Mark todo as done
 function toggleDone(key) {
+  // Find the corresponding todo object in the todoItems array
   const index = todoItems.findIndex(item => item.id === Number(key));
   todoItems[index].checked = !todoItems[index].checked;
   renderTodo(todoItems[index]);
@@ -108,11 +114,16 @@ function toggleDone(key) {
 
 // Delete todo
 function deleteTodo(key) {
+  // Find the corresponding todo object in the todoItems array
   const index = todoItems.findIndex(item => item.id === Number(key));
+
+  // Create a new object with properties of the current todo item
+  // and a `deleted` property which is set to true
   const todo = {
     deleted: true,
     ...todoItems[index]
   };
+  // Remove the todo item from the array by filtering it out
   todoItems = todoItems.filter(item => item.id !== Number(key));
 
   //Fetch request for deletion of todo item from database
@@ -156,6 +167,7 @@ form.addEventListener('submit', event => {
   event.preventDefault();
   const input = document.querySelector('.js-todo-input');
 
+  // Remove whitespace from beginning and end of text input
   const text = input.value.trim();
   if (text !== '') {
     addTodo(text);
@@ -168,11 +180,14 @@ form.addEventListener('submit', event => {
 // Check or delete todo items
 const list = document.querySelector('.js-todo-list');
 list.addEventListener('click', event => {
+  // If clicked element is a checkbox
   if (event.target.classList.contains('js-tick')) {
+    // Get the data-key of its parent element and pass it to toggleDone
     const itemKey = event.target.parentElement.dataset.key;
     toggleDone(itemKey);
   }
   
+  // If element clicked is a delete button
   if (event.target.classList.contains('js-delete-todo')) {
     const itemKey = event.target.parentElement.dataset.key;
     deleteTodo(itemKey);
