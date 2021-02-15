@@ -55,7 +55,7 @@ function addTodo(text) {
   };
 
   //Fetch request to add todo to database
-  fetch('http://localhost:7000/add-todo', {
+  fetch('/add-todo', {
     method: 'POST',
     body: JSON.stringify(todo),
     headers: {
@@ -88,7 +88,7 @@ function toggleDone(key) {
   const todo = todoItems[index];
 
   // Fetch request to mark todo as done in database
-  fetch('http://localhost:7000/mark-checked', {
+  fetch('/mark-checked', {
     method: 'POST',
     body: JSON.stringify(todo),
     headers: {
@@ -127,7 +127,7 @@ function deleteTodo(key) {
   todoItems = todoItems.filter(item => item.id !== Number(key));
 
   //Fetch request for deletion of todo item from database
-  fetch('http://localhost:7000/delete-todo', {
+  fetch('/delete-todo', {
     method: 'POST',
     body: JSON.stringify(todo),
     headers: {
