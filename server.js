@@ -15,20 +15,12 @@ app.use(express.static(__dirname + '/public'));
 
 
 //Create database connection
-const db = mysql.createConnection({
+const db = mysql.createPool({
 	host: process.env.DATABASE_HOST,
 	user: process.env.DATABASE_USER,
 	password: process.env.DATABASE_PASSWORD,
 	database: process.env.DATABASE_NAME
 })
-
-db.connect((err) => {
-	if (err) {
-		console.log(err);
-		process.exit(1);
-	}
-	console.log('Database connected!');
-});
 
 
 //Connect html file
